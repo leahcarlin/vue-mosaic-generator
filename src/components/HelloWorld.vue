@@ -1,58 +1,74 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div class="container" ref="containerRef">
+    <canvas id="canvas" style="display: none" ref="canvasRef"></canvas>
+    <img id="photo" src="@/assets/woman.png" alt="Sample" ref="imgRef" />
+
+    <p>Click anywhere on the image to get the pixel color!</p>
+    <div
+      id="color-box"
+      ref="colorBoxRef"
+      style="width: 50px; height: 50px; border: 1px solid #000"
+    ></div>
+    <p id="hex-code" ref="hexCodeRef">#FFFFFF</p>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
+<script setup>
+import { ref, onMounted } from "vue";
+
+// References
+const containerRef = ref(null);
+const canvasRef = ref(null);
+const imgRef = ref(null);
+const colorBoxRef = ref(null);
+const hexCodeRef = ref(null);
+
+// Helper function to convert RGB to HEX
+function rgbToHex(r, g, b) {
+  return (
+    "#" +
+    [r, g, b]
+      .map((x) => x.toString(16).padStart(2, "0"))
+      .join("")
+      .toUpperCase()
+  );
 }
+
+onMounted(() => {
+  const img = imgRef.value;
+  const canvas = canvasRef.value;
+  const ctx = canvas.getContext("2d");
+  const colorBox = colorBoxRef.value;
+  const hexCode = hexCodeRef.value;
+
+  // Draw the image on the canvas once it's loaded
+  img.addEventListener("load", () => {
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+  });
+
+  // Handle click event to get the pixel color
+  img.addEventListener("click", (event) => {
+    const rect = img.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    const pixelData = ctx.getImageData(x, y, 1, 1).data;
+    const [r, g, b] = pixelData;
+
+    const hexColor = rgbToHex(r, g, b);
+    console.log(`HEX Color: ${hexColor}`);
+
+    colorBox.style.backgroundColor = hexColor;
+    hexCode.textContent = hexColor;
+  });
+});
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+<style lang="scss">
+#photo {
+  width: 600px;
+  height: auto;
 }
 </style>
