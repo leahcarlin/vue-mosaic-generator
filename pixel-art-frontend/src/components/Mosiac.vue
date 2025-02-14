@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <canvas id="canvas" ref="canvasRef"></canvas>
-    <button @click="generateMosaic()">Generate Mosaic</button>
   </div>
 </template>
 
@@ -13,11 +12,11 @@ import imgFile from "@/assets/woman2.jpg";
 
 const canvasRef = ref(null);
 const imgSrc = imgFile;
-const tileSize = 5; // Size of mosaic tiles (10px x 10px)
+const tileSize = 5; // size of mosaic tiles (5px x 5px)
 const photosStore = new PhotosStore();
 window.store = photosStore;
 
-// Helper function: Compute closest color
+// compute closest filter color for Unsplash API
 function closestColor(r, g, b) {
   const colors = {
     black: { r: 0, g: 0, b: 0 },
@@ -44,36 +43,28 @@ function closestColor(r, g, b) {
       closest = name;
     }
   }
-  console.log("closest", closest);
   return closest;
 }
 
-// Fetch images based on color
+// fetch images based on color
 async function fetchImage(color) {
-  console.log("Fetching image...");
   // if no photos for color stored, get photos first
   if (!photosStore[color].length) {
     const photos = await getPhotos("nature", color);
     photosStore.addPhotos(color, photos);
   }
   // return one random photo
-  const photo = photosStore.getRandomPhotoByColor(color);
-  console.log("photo", photo);
-  return photo;
+  return photosStore.getRandomPhotoByColor(color);
 }
 
+// checking every 5px and replace each section with a new 5x5 image
 async function processMosaic(ctx, img) {
-  console.log("Processing Mosaic..."); // ✅ Check if function is called
-
   for (let y = 0; y < img.height; y += tileSize) {
     for (let x = 0; x < img.width; x += tileSize) {
-      console.log(`Processing pixel at x: ${x}, y: ${y}`); // ✅ Debugging
       const pixelData = ctx.getImageData(x, y, 1, 1).data;
       const [r, g, b] = pixelData;
 
-      console.log(`Extracted RGB: ${r}, ${g}, ${b}`); // ✅ Debugging
       const colorName = closestColor(r, g, b);
-      console.log(`Closest color: ${colorName}`); // ✅ Debugging
 
       const image = await fetchImage(colorName);
 
@@ -82,7 +73,6 @@ async function processMosaic(ctx, img) {
         tileImg.crossOrigin = "anonymous";
         tileImg.onload = () => {
           ctx.drawImage(tileImg, x, y, tileSize, tileSize);
-          console.log(`Placed image at x: ${x}, y: ${y}`); // ✅ Debugging
         };
         tileImg.src = image.urls.small;
       }
@@ -90,7 +80,6 @@ async function processMosaic(ctx, img) {
   }
 }
 
-// Generate Mosaic
 async function generateMosaic() {
   const canvas = canvasRef.value;
   const ctx = canvas.getContext("2d");
@@ -99,13 +88,12 @@ async function generateMosaic() {
   img.crossOrigin = "anonymous";
 
   img.onload = async () => {
-    console.log("Image Loaded: ", img.width, img.height); // ✅ Debugging step
-
     canvas.width = img.width;
     canvas.height = img.height;
     ctx.drawImage(img, 0, 0);
 
-    await processMosaic(ctx, img); // ✅ Now process pixels after loading
+    // process pixels after loading
+    await processMosaic(ctx, img);
   };
 }
 
@@ -116,7 +104,7 @@ onMounted(() => {
 
 <style scoped>
 #canvas {
-  width: 600px;
+  width: 800px;
   height: auto;
 }
 </style>
