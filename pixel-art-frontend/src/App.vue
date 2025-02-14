@@ -1,14 +1,14 @@
 <template>
-  <Home />
+  <Mosaic />
 </template>
 
 <script>
-import Home from "./components/Home.vue";
+import Mosaic from "./components/Mosiac.vue";
 
 export default {
   name: "App",
   components: {
-    Home,
+    Mosaic,
   },
 };
 </script>
