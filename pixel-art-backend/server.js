@@ -34,7 +34,7 @@ app.get("/photos", async (req, res) => {
       params: {
         query,
         color, // Color filter (black, white, yellow, etc.)
-        per_page: 10,
+        per_page: 50,
       },
     });
 

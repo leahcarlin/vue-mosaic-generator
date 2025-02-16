@@ -5,16 +5,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineProps, watch } from "vue";
 import { getPhotos } from "../actions/index";
 import { PhotosStore } from "../store/PhotosStore";
-import imgFile from "@/assets/woman2.jpg";
+
+const props = defineProps({
+  imgSrc: String,
+});
 
 const canvasRef = ref(null);
-const imgSrc = imgFile;
 const tileSize = 5; // size of mosaic tiles (5px x 5px)
 const photosStore = new PhotosStore();
-window.store = photosStore;
 
 // compute closest filter color for Unsplash API
 function closestColor(r, g, b) {
@@ -57,7 +58,7 @@ async function fetchImage(color) {
   return photosStore.getRandomPhotoByColor(color);
 }
 
-// checking every 5px and replace each section with a new 5x5 image
+// checking every tileSize and replace each section with a new image
 async function processMosaic(ctx, img) {
   for (let y = 0; y < img.height; y += tileSize) {
     for (let x = 0; x < img.width; x += tileSize) {
@@ -80,21 +81,37 @@ async function processMosaic(ctx, img) {
   }
 }
 
+watch(
+  () => props.imgSrc,
+  (newSrc) => {
+    if (newSrc) {
+      generateMosaic(); // Re-run when a new image is uploaded
+    }
+  }
+);
+
 async function generateMosaic() {
   const canvas = canvasRef.value;
+  if (!canvas || !props.imgSrc) return;
+
   const ctx = canvas.getContext("2d");
   const img = new Image();
-  img.src = imgSrc;
-  img.crossOrigin = "anonymous";
 
   img.onload = async () => {
+    console.log("Image loaded", img.width, img.height);
     canvas.width = img.width;
     canvas.height = img.height;
     ctx.drawImage(img, 0, 0);
 
-    // process pixels after loading
+    // Now process the mosaic
     await processMosaic(ctx, img);
   };
+
+  img.onerror = (err) => console.error("Failed to load image", err);
+
+  // Ensure proper loading of Base64 images
+  img.crossOrigin = "anonymous";
+  img.src = props.imgSrc; // Base64 string works here!
 }
 
 onMounted(() => {
@@ -104,7 +121,7 @@ onMounted(() => {
 
 <style scoped>
 #canvas {
-  width: 800px;
+  width: 80vw;
   height: auto;
 }
 </style>
