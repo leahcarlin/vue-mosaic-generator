@@ -1,22 +1,28 @@
 <template>
-  <div class="uploader">
-    <input
-      v-if="!selectedFile && !previewUrl"
-      type="file"
-      @change="onFileChange"
-      accept="image/*"
-    />
-    <div v-if="previewUrl && !selectedFile" class="preview">
-      <img :src="previewUrl" alt="Image preview" />
-      <button @click="uploadFile" :disabled="!previewUrl">Create Mosaic</button>
+  <div class="container">
+    <div class="uploader" v-if="!selectedFile">
+      <h1>Photo Mosaic Generator</h1>
+      <p>Upload an image and watch it become a photo mosaic before your eyes</p>
+      <p>Each image will be made up of many smaller images or tiles</p>
+      <input
+        v-if="!selectedFile"
+        type="file"
+        @change="onFileChange"
+        accept="image/*"
+      />
+      <div v-if="previewUrl && !selectedFile" class="preview">
+        <img :src="previewUrl" alt="Image preview" />
+        <Button @click="uploadFile" title="Create Mosaic" />
+      </div>
     </div>
-    <div v-if="selectedFile"><Mosaic :imgSrc="previewUrl" /></div>
+    <Mosaic v-if="selectedFile" :imgSrc="previewUrl" />
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import Mosaic from "./Mosiac.vue";
+import Button from "./Button.vue";
 
 const isUploaded = ref(false);
 const selectedFile = ref(null);
@@ -43,11 +49,21 @@ const uploadFile = () => {
 .uploader {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  height: 100vh;
+}
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 200px;
 }
 
 .preview img {
-  max-width: 200px;
+  width: 100%;
   border-radius: 8px;
 }
 </style>
