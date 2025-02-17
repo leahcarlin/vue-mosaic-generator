@@ -25,4 +25,7 @@ p,
 h1 {
   margin: 0;
 }
+body {
+  margin: 40px 0;
+}
 </style>

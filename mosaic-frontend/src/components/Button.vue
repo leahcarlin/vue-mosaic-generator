@@ -1,5 +1,5 @@
 <template>
-  <button class="btn" type="submit" @click="$emit('click')">
+  <button :class="['btn', type]" type="submit" @click="$emit('click')">
     {{ title }}
   </button>
 </template>
@@ -9,6 +9,7 @@ import { defineProps, defineEmits } from "vue";
 
 defineProps({
   title: String,
+  type: String,
 });
 defineEmits(["click"]);
 </script>
@@ -30,7 +31,7 @@ defineEmits(["click"]);
   touch-action: manipulation;
 }
 
-.btn:before {
+.btn.primary:before {
   content: "";
   background: linear-gradient(
     45deg,
@@ -70,7 +71,7 @@ defineEmits(["click"]);
   }
 }
 
-.btn:after {
+.btn.primary:after {
   z-index: -1;
   content: "";
   position: absolute;

@@ -121,7 +121,7 @@ onMounted(() => {
 
 <style scoped>
 #canvas {
-  width: 80vw;
+  width: 70vw;
   height: auto;
 }
 </style>
