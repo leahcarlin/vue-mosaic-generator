@@ -1,11 +1,29 @@
 <template>
   <div class="container">
+    <SidePanel>
+      <Dropdown
+        :options="tileSizeOptions"
+        :selectedOption="tileSize"
+        title="Tile size"
+        placeholder="Select size"
+        @change="updateSettings('size', $event)" />
+      <Dropdown
+        :options="imageThemeOptions"
+        :selectedOption="imageTheme"
+        title="Image theme"
+        placeholder="Select theme"
+        @change="updateSettings('theme', $event)" />
+      <Button @click="generateMosaic" title="Update" type="primary"
+    /></SidePanel>
     <canvas id="canvas" ref="canvasRef"></canvas>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, defineProps, watch } from "vue";
+import SidePanel from "./SidePanel.vue";
+import Dropdown from "./Dropdown.vue";
+import Button from "./Button.vue";
 import { getPhotos } from "../actions/index";
 import { PhotosStore } from "../store/PhotosStore";
 
@@ -13,10 +31,38 @@ const props = defineProps({
   imgSrc: String,
 });
 
-const canvasRef = ref(null);
-const tileSize = 5; // size of mosaic tiles (5px x 5px)
-const photosStore = new PhotosStore();
+const tileSizeOptions = [
+  { value: 2, label: "extra small" },
+  { value: 5, label: "small" },
+  { value: 10, label: "medium" },
+  { value: 20, label: "large" },
+];
 
+const imageThemeOptions = [
+  { value: "abstract", label: "Abstract" },
+  { value: "cartoon", label: "Cartoon" },
+  { value: "food", label: "Food" },
+  { value: "nature", label: "Nature" },
+];
+
+const canvasRef = ref(null);
+const tileSize = ref(5); // size of mosaic tiles (5px x 5px)
+const imageTheme = ref("nature");
+let photosStore = new PhotosStore();
+
+// update settings
+function updateSettings(attribute, event) {
+  switch (attribute) {
+    case "size":
+      tileSize.value = parseInt(event);
+      break;
+    case "theme":
+      imageTheme.value = event;
+      break;
+    default:
+      break;
+  }
+}
 // compute closest filter color for Unsplash API
 function closestColor(r, g, b) {
   const colors = {
@@ -49,19 +95,23 @@ function closestColor(r, g, b) {
 
 // fetch images based on color
 async function fetchImage(color) {
-  // if no photos for color stored, get photos first
-  if (!photosStore[color].length) {
-    const photos = await getPhotos("nature", color);
-    photosStore.addPhotos(color, photos);
+  // Check if there are no photos for the theme or color in the store
+  const themePhotos = photosStore.themes[imageTheme.value] || {};
+  const colorPhotos = themePhotos[color] || [];
+  // If no photos for the theme or color, fetch new ones
+  if (colorPhotos.length === 0) {
+    const photos = await getPhotos(imageTheme.value, color);
+    photosStore.addPhotos(imageTheme.value, color, photos);
   }
-  // return one random photo
-  return photosStore.getRandomPhotoByColor(color);
+
+  // Return one random photo for the theme and color
+  return photosStore.getRandomPhoto(imageTheme.value, color);
 }
 
 // checking every tileSize and replace each section with a new image
 async function processMosaic(ctx, img) {
-  for (let y = 0; y < img.height; y += tileSize) {
-    for (let x = 0; x < img.width; x += tileSize) {
+  for (let y = 0; y < img.height; y += tileSize.value) {
+    for (let x = 0; x < img.width; x += tileSize.value) {
       const pixelData = ctx.getImageData(x, y, 1, 1).data;
       const [r, g, b] = pixelData;
 
@@ -73,7 +123,7 @@ async function processMosaic(ctx, img) {
         const tileImg = new Image();
         tileImg.crossOrigin = "anonymous";
         tileImg.onload = () => {
-          ctx.drawImage(tileImg, x, y, tileSize, tileSize);
+          ctx.drawImage(tileImg, x, y, tileSize.value, tileSize.value);
         };
         tileImg.src = image.urls.small;
       }
@@ -98,7 +148,6 @@ async function generateMosaic() {
   const img = new Image();
 
   img.onload = async () => {
-    console.log("Image loaded", img.width, img.height);
     canvas.width = img.width;
     canvas.height = img.height;
     ctx.drawImage(img, 0, 0);
@@ -120,6 +169,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.container {
+  display: flex;
+}
 #canvas {
   width: 70vw;
   height: auto;

@@ -1,28 +1,33 @@
 export class PhotosStore {
   constructor() {
-    this.black = [];
-    this.white = [];
-    this.yellow = [];
-    this.orange = [];
-    this.red = [];
-    this.purple = [];
-    this.magenta = [];
-    this.green = [];
-    this.teal = [];
-    this.blue = [];
+    this.themes = {};
   }
 
-  addPhotos(color, photos) {
-    this[color].push(...photos);
-    return this;
+  addPhotos(theme, color, photos) {
+    // Create theme if it doesn't exist
+    if (!this.themes[theme]) {
+      this.themes[theme] = {};
+    }
+    // Create color array if it doesn't exist
+    if (!this.themes[theme][color]) {
+      this.themes[theme][color] = [];
+    }
+    this.themes[theme][color].push(...photos);
   }
 
-  getRandomPhotoByColor(color) {
-    const photos = this[color];
+  getPhotos(theme, color) {
+    // Use standard checks to access properties
+    if (this.themes[theme] && this.themes[theme][color]) {
+      return this.themes[theme][color];
+    }
+    return []; // Return an empty array if no photos are found
+  }
 
-    // Check if photos exist and have more than 1 item
-    if (!photos || photos.length === 0) {
-      console.error(`No photos found for color: ${color}`);
+  getRandomPhoto(theme, color) {
+    const photos = this.getPhotos(theme, color);
+
+    if (photos.length === 0) {
+      console.warn(`No photos found for theme: "${theme}", color: "${color}"`);
       return null;
     }
 
