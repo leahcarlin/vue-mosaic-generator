@@ -1,19 +1,26 @@
 <template>
   <div class="container">
     <SidePanel>
-      <Dropdown
-        :options="tileSizeOptions"
-        :selectedOption="tileSize"
-        title="Tile size"
-        placeholder="Select size"
-        @change="updateSettings('size', $event)" />
-      <Dropdown
-        :options="imageThemeOptions"
-        :selectedOption="imageTheme"
-        title="Image theme"
-        placeholder="Select theme"
-        @change="updateSettings('theme', $event)" />
-      <Button @click="generateMosaic" title="Update" type="primary"/>
+      <div class="panel">
+        <div class="settings">
+          <Dropdown
+            :options="tileSizeOptions"
+            :selectedOption="tileSize"
+            title="Tile size"
+            placeholder="Select size"
+            @change="updateSettings('size', $event)"
+          />
+          <Dropdown
+            :options="imageThemeOptions"
+            :selectedOption="imageTheme"
+            title="Image theme"
+            placeholder="Select theme"
+            @change="updateSettings('theme', $event)"
+          />
+          <Button @click="generateMosaic" title="Update" type="primary" />
+        </div>
+        <FileUploader @selected="generateMosaic" btnLabel="Upload new image" />
+      </div>
     </SidePanel>
     <canvas id="canvas" ref="canvasRef"></canvas>
   </div>
@@ -24,6 +31,7 @@ import { ref, onMounted, defineProps, watch } from "vue";
 import SidePanel from "./SidePanel.vue";
 import Dropdown from "./Dropdown.vue";
 import Button from "./Button.vue";
+import FileUploader from "./FileUploader.vue";
 import { getPhotos } from "../actions/index";
 import { PhotosStore } from "../store/PhotosStore";
 
@@ -46,6 +54,7 @@ const imageThemeOptions = [
 ];
 
 const canvasRef = ref(null);
+const imageSrc = ref(props.imgSrc);
 const tileSize = ref(5); // size of mosaic tiles (5px x 5px)
 const imageTheme = ref("nature");
 let photosStore = new PhotosStore();
@@ -132,7 +141,7 @@ async function processMosaic(ctx, img) {
 }
 
 watch(
-  () => props.imgSrc,
+  () => imageSrc.value,
   (newSrc) => {
     if (newSrc) {
       generateMosaic(); // Re-run when a new image is uploaded
@@ -142,7 +151,7 @@ watch(
 
 async function generateMosaic() {
   const canvas = canvasRef.value;
-  if (!canvas || !props.imgSrc) return;
+  if (!canvas || !imageSrc.value) return;
 
   const ctx = canvas.getContext("2d");
   const img = new Image();
@@ -160,7 +169,7 @@ async function generateMosaic() {
 
   // Ensure proper loading of Base64 images
   img.crossOrigin = "anonymous";
-  img.src = props.imgSrc; // Base64 string works here!
+  img.src = imageSrc.value;
 }
 
 onMounted(() => {
@@ -176,5 +185,17 @@ onMounted(() => {
   width: 70vw;
   height: auto;
   overflow: scroll;
+}
+.panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  margin: 20px 0;
+}
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 </style>

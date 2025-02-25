@@ -1,7 +1,7 @@
 <template>
   <div class="uploader" v-if="!selectedFile">
     <label class="file-upload"
-      >Upload Image
+      >{{ btnLabel }}
       <input
         v-if="!selectedFile"
         type="file"
@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits } from "vue";
+import { ref, defineEmits, defineProps } from "vue";
 import Button from "./Button.vue";
 
 const isUploaded = ref(false);
@@ -28,6 +28,9 @@ const selectedFile = ref(null);
 const previewUrl = ref(null);
 
 defineEmits(["selected"]);
+defineProps({
+  btnLabel: String,
+});
 
 const onFileChange = (event) => {
   const file = event.target.files[0];

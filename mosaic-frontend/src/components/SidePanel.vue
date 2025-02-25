@@ -54,6 +54,7 @@ const isOpen = ref(true);
   flex-direction: column;
   gap: 20px;
   width: 100%;
+  height: 100%;
 }
 
 /* Mobile & Tablet styles */

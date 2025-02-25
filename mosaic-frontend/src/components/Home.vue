@@ -8,7 +8,7 @@
         </p>
         <p>Each image will be made up of many smaller images or tiles</p>
       </div>
-      <FileUploader @selected="setSelectedImage" />
+      <FileUploader @selected="setSelectedImage" btnLabel="Upload image" />
     </div>
     <Mosaic v-else :imgSrc="imgSrc" />
   </div>
