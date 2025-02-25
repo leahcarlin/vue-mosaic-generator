@@ -29,6 +29,7 @@ defineEmits(["click"]);
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  font-size: 16px;
 }
 
 .btn.primary:before {

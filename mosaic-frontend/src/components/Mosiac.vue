@@ -13,8 +13,8 @@
         title="Image theme"
         placeholder="Select theme"
         @change="updateSettings('theme', $event)" />
-      <Button @click="generateMosaic" title="Update" type="primary"
-    /></SidePanel>
+      <Button @click="generateMosaic" title="Update" type="primary"/>
+    </SidePanel>
     <canvas id="canvas" ref="canvasRef"></canvas>
   </div>
 </template>
@@ -32,10 +32,10 @@ const props = defineProps({
 });
 
 const tileSizeOptions = [
-  { value: 2, label: "extra small" },
-  { value: 5, label: "small" },
-  { value: 10, label: "medium" },
-  { value: 20, label: "large" },
+  { value: 2, label: "Extra small" },
+  { value: 5, label: "Small" },
+  { value: 10, label: "Medium" },
+  { value: 20, label: "Large" },
 ];
 
 const imageThemeOptions = [
@@ -54,7 +54,7 @@ let photosStore = new PhotosStore();
 function updateSettings(attribute, event) {
   switch (attribute) {
     case "size":
-      tileSize.value = parseInt(event);
+      tileSize.value = event;
       break;
     case "theme":
       imageTheme.value = event;
@@ -175,5 +175,6 @@ onMounted(() => {
 #canvas {
   width: 70vw;
   height: auto;
+  overflow: scroll;
 }
 </style>

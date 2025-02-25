@@ -33,7 +33,7 @@ const isOpen = ref(true);
   transition: transform 0.3s ease-in-out;
 }
 .side-panel.open {
-  width: 300px;
+  width: 20vw;
 }
 
 .close-btn {
@@ -48,5 +48,45 @@ const isOpen = ref(true);
 .arrow {
   width: 20px;
   height: 20px;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Mobile & Tablet styles */
+@media (max-width: 1024px) {
+  .side-panel {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .side-panel.hidden {
+    transform: translateY(100%);
+  }
+  .side-panel.open {
+    width: auto;
+    height: 40vh;
+  }
+  .side-panel .arrow {
+    transform: rotate(90deg);
+  }
+  .side-panel.open .arrow {
+    transform: rotate(270deg);
+  }
+  .close-btn {
+    position: fixed;
+    top: auto;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
 }
 </style>
