@@ -2,7 +2,8 @@
   <div class="container">
     <SidePanel>
       <div class="panel">
-        <div class="settings">
+        <div class="current">
+          <h3>Current image</h3>
           <Dropdown
             :options="tileSizeOptions"
             :selectedOption="tileSize"
@@ -17,9 +18,20 @@
             placeholder="Select theme"
             @change="updateSettings('theme', $event)"
           />
-          <Button @click="generateMosaic" title="Update" type="primary" />
+          <Button @click="generateMosaic" title="Update" type="secondary" />
+          <Button
+            @click="downloadMosaic"
+            title="Download mosaic"
+            type="primary"
+          />
         </div>
-        <FileUploader @selected="generateMosaic" btnLabel="Upload new image" />
+        <div class="new">
+          <h3>New</h3>
+          <FileUploader
+            @selected="generateNewMosaic($event)"
+            btnLabel="Upload new image"
+          />
+        </div>
       </div>
     </SidePanel>
     <canvas id="canvas" ref="canvasRef"></canvas>
@@ -27,7 +39,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineProps, watch } from "vue";
+import { ref, onMounted, defineProps } from "vue";
 import SidePanel from "./SidePanel.vue";
 import Dropdown from "./Dropdown.vue";
 import Button from "./Button.vue";
@@ -49,8 +61,10 @@ const tileSizeOptions = [
 const imageThemeOptions = [
   { value: "abstract", label: "Abstract" },
   { value: "cartoon", label: "Cartoon" },
+  { value: "fashion", label: "Fashion" },
   { value: "food", label: "Food" },
   { value: "nature", label: "Nature" },
+  { value: "sports", label: "Sports" },
 ];
 
 const canvasRef = ref(null);
@@ -140,14 +154,12 @@ async function processMosaic(ctx, img) {
   }
 }
 
-watch(
-  () => imageSrc.value,
-  (newSrc) => {
-    if (newSrc) {
-      generateMosaic(); // Re-run when a new image is uploaded
-    }
-  }
-);
+const downloadMosaic = () => {
+  const link = document.createElement("a");
+  link.download = "mosaic-image.png";
+  link.href = canvasRef.value.toDataURL("image/png"); // convert canvas to data URL
+  link.click();
+};
 
 async function generateMosaic() {
   const canvas = canvasRef.value;
@@ -172,6 +184,11 @@ async function generateMosaic() {
   img.src = imageSrc.value;
 }
 
+function generateNewMosaic(imgUrl) {
+  imageSrc.value = imgUrl;
+  generateMosaic();
+}
+
 onMounted(() => {
   generateMosaic();
 });
@@ -193,7 +210,7 @@ onMounted(() => {
   height: 100%;
   margin: 20px 0;
 }
-.settings {
+.current {
   display: flex;
   flex-direction: column;
   gap: 20px;

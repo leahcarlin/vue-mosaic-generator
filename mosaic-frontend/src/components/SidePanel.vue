@@ -19,6 +19,7 @@ const isOpen = ref(true);
 <style scoped>
 .container {
   position: relative;
+  text-align: left;
 }
 
 .side-panel {

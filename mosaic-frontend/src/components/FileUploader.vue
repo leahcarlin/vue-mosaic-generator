@@ -12,7 +12,7 @@
       <img :src="previewUrl" alt="Image preview" />
       <Button
         @click="$emit('selected', previewUrl)"
-        title="Create Mosaic"
+        title="Create mosaic"
         type="primary"
       />
     </div>

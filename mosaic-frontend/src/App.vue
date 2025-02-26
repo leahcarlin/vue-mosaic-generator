@@ -39,6 +39,7 @@ div {
 }
 
 h1,
+h3,
 label,
 button {
   font-family: "Doto", serif;
