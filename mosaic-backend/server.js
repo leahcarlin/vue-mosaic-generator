@@ -12,7 +12,10 @@ app.use(cors()); // Enable CORS for frontend requests
 
 app.use(
   cors({
-    origin: "http://localhost:8080", // Change this when deploying
+    origin: [
+      "http://localhost:8080",
+      "https://leahcarlin.github.io/vue-mosaic-generator",
+    ],
     methods: ["GET", "POST"], // Allowed methods
     credentials: true, // Allow cookies if needed
   })
