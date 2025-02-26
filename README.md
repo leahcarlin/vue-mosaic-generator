@@ -45,7 +45,7 @@ Each part of the application must be run separately.
 ```sh
   cd mosaic-frontend
   npm install
-  npm run serve
+  npm run start
 ```
 
 3. **Start the backend**
@@ -53,5 +53,5 @@ Each part of the application must be run separately.
 ```sh
   cd mosaic-backend
   npm install
-  npm run serve
+  npm run start
 ```
