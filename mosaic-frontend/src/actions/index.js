@@ -1,7 +1,9 @@
+const API_URL = "https://photo-mosaic-backend.herokuapp.com";
+
 export async function getPhotos(query, color) {
   try {
     const response = await fetch(
-      `http://localhost:5000/photos?query=${query}&color=${color}`
+      `${API_URL}/photos?query=${query}&color=${color}`
     );
     const data = await response.json();
     return data;
