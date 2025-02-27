@@ -1,4 +1,4 @@
-const API_URL = "https://photo-mosaic-backend.herokuapp.com";
+const API_URL = "https://photo-mosaic-backend-600fdfdca1b7.herokuapp.com";
 
 export async function getPhotos(query, color) {
   try {
