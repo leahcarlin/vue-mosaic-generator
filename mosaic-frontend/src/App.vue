@@ -48,4 +48,7 @@ button {
   font-style: normal;
   font-variation-settings: "ROND" 0;
 }
+a {
+  all: unset;
+}
 </style>
