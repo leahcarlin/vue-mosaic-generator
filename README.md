@@ -6,7 +6,7 @@ A photo mosaic is a digital image composed of many smaller images arranged in a 
 
 ## About the Photo Mosaic Generator
 
-The **Photo Mosaic Generator** is a web application that transforms an uploaded image into a stunning mosaic using images sourced from the [**Unsplash API**](https://unsplash.com/developers)—the largest open collection of high-quality photos.
+The (**Photo Mosaic Generator**)[https://leahcarlin.github.io/vue-mosaic-generator/] is a web application that transforms an uploaded image into a stunning mosaic using images sourced from the [**Unsplash API**](https://unsplash.com/developers)—the largest open collection of high-quality photos.
 
 ### Features & Technologies
 
