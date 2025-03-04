@@ -1,4 +1,5 @@
 # Photo Mosaic Generator
+[https://leahcarlin.github.io/vue-mosaic-generator/](https://leahcarlin.github.io/vue-mosaic-generator/)
 
 ## What is a Photo Mosaic?
 
